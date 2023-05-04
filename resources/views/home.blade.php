@@ -1,3 +1,4 @@
 <x-app-layout>
-    <h1>Home</h1>
+				<h1>Home</h1>
+				<h3>HOMe</h3>
 </x-app-layout>
