@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TaskRequest;
+use App\Models\Task;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
     public function index()
     {
         return view('tasks.index', [
-            'tasks' => DB::table('tasks')->orderBy('id', 'desc')->get()
+            'task' => new Task,
+            'submit' => 'Create',
+            'tasks' => Task::orderBy('id', 'desc')->get()
         ]);
     }
 
@@ -19,29 +22,32 @@ class TaskController extends Controller
         return view('tasks.create');
     }
 
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        DB::table('tasks')->insert([
-            'list' => $request->list,
-        ]);
+        // $request->validate([
+        //     'list' => ['required', 'min:3', 'string'],
+        // ]);
+        Task::create($request->all());
         return back();
     }
 
-    public function edit($id)
+    public function edit(Task $task)
     {
-        $task = DB::table('tasks') -> where('id', $id)->first();
-        return view('tasks.edit', ['task' => $task]);
+        return view('tasks.edit', [
+            'task' => $task, 
+            'submit' => 'Edit',
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(TaskRequest $request, $id)
     {
-        DB::table('tasks') -> where('id', $id)->update(['list' => $request-> list]);
+        Task::find($id)->update(['list' => $request->list]);
         return redirect('tasks');
     }
 
     public function destroy($id)
     {
-        $task = DB::table('tasks')->where('id', $id)->delete();
+        $task = Task::find($id)->delete();
         return back();
     }
 }
